@@ -50,7 +50,7 @@ pub fn process_instruction(
 
 #[cfg(test)]
 mod tests {
-    const GRID_SAMPLES_PER_DIM: usize = 40;
+    const GRID_SAMPLES_PER_DIM: usize = 64;
 
     use super::*;
     use grid::random_grid;
@@ -82,7 +82,7 @@ mod tests {
             account_key,
             Account {
                 lamports: 1_000_000,
-                data: vec![0; grid.len()],
+                data: Vec::with_capacity(0),
                 owner: program_id,
                 ..Account::default()
             },
@@ -118,7 +118,6 @@ mod tests {
         );
 
         let width_height_pairs: Vec<(usize, usize)> = (1..=MAX_SIZE).zip(1..=MAX_SIZE).collect();
-        // let width_height_pairs = vec![(10,10)];
         assert!(width_height_pairs.len() == MAX_SIZE); // just to make sure
 
         let grids: Vec<Vec<u8>> = width_height_pairs
