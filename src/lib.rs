@@ -72,7 +72,16 @@ mod tests {
     impl TestState {
         fn new(name: &str) -> TestState {
             let (program_id, account_key) = (Pubkey::new_unique(), Pubkey::new_unique());
-            let program = ProgramTest::new(name, program_id, processor!(process_instruction));
+            let mut program = ProgramTest::new(name, program_id, processor!(process_instruction));
+            program.add_account(
+                account_key,
+                Account {
+                    lamports: 1_000_000,
+                    data: Vec::with_capacity(0),
+                    owner: program_id,
+                    ..Account::default()
+                },
+            );
             TestState {
                 program_id,
                 account_key,
@@ -88,16 +97,6 @@ mod tests {
         let grid = [
             5, 5, 1, 2, 9, 1, 0, 2, 10, 2, 1, 0, 9, 2, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
         ];
-
-        state.program.add_account(
-            state.account_key,
-            Account {
-                lamports: 1_000_000,
-                data: Vec::with_capacity(0),
-                owner: state.program_id,
-                ..Account::default()
-            },
-        );
 
         let (mut banks_client, payer, recent_blockhash) = state.program.start().await;
 
@@ -119,7 +118,6 @@ mod tests {
 
     #[tokio::test]
     async fn test_minesweeper_solver_rand() {
-
         let mut state = TestState::new("solana_program0");
 
         let width_height_pairs: Vec<(usize, usize)> = (1..=MAX_SIZE).zip(1..=MAX_SIZE).collect();
@@ -141,19 +139,7 @@ mod tests {
             })
             .flatten()
             .collect(); // inefficent TLB wise, will opt later.
-
-        state.program.add_account(
-            state.account_key,
-            Account {
-                lamports: 1_000_000, // lamports, not lesslie lamport ;)
-                data: Vec::with_capacity(0),
-                owner:state.program_id,
-                ..Account::default()
-            },
-        );
-
-        let (mut banks_client, payer, recent_blockhash) =state.program.start().await;
-        
+        let (mut banks_client, payer, recent_blockhash) = state.program.start().await;
 
         let transactions: Vec<Transaction> = grids
             .into_iter()
