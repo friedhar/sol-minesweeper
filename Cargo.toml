@@ -1,0 +1,21 @@
+[package]
+name = "frankbounty"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+no-entrypoint = []
+
+[dependencies]
+solana-program = "=1.18.26"
+bincode = "=1.3.3"
+serde = { version = "1.0", features = ["derive"] }
+rand = "=0.8.5"
+
+[dev-dependencies]
+solana-program-test = "1.18.26"
+solana-sdk = "1.18.26"
+tokio = "1.43.0"
