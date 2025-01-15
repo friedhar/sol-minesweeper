@@ -69,7 +69,7 @@ mod tests {
         let account_key = Pubkey::new_unique();
 
         let mut program_test = ProgramTest::new(
-            "solana_goated_frankbounty",
+            "solana_program0",
             program_id,
             processor!(process_instruction),
         );
@@ -112,7 +112,7 @@ mod tests {
         let account_key = Pubkey::new_unique();
 
         let mut program_test = ProgramTest::new(
-            "solana_goated_frankbounty",
+            "solana_program0",
             program_id,
             processor!(process_instruction),
         );

@@ -1411,19 +1411,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6c2141d6d6c8512188a7891b4b01590a45f6dac67afb4f255c4124dbb86d4eaa"
 
 [[package]]
-name = "frankbounty"
-version = "0.1.0"
-dependencies = [
- "bincode",
- "rand 0.8.5",
- "serde",
- "solana-program",
- "solana-program-test",
- "solana-sdk",
- "tokio",
-]
-
-[[package]]
 name = "futures"
 version = "0.3.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3601,6 +3588,19 @@ checksum = "c970269d99b64e60ec3bd6ad27270092a5394c4e309314b18ae3fe575695fbe8"
 dependencies = [
  "libc",
  "windows-sys 0.52.0",
+]
+
+[[package]]
+name = "sol-minesweeper"
+version = "0.1.0"
+dependencies = [
+ "bincode",
+ "rand 0.8.5",
+ "serde",
+ "solana-program",
+ "solana-program-test",
+ "solana-sdk",
+ "tokio",
 ]
 
 [[package]]
