@@ -63,37 +63,48 @@ mod tests {
         transaction::Transaction,
     };
 
+    struct TestState {
+        pub(crate) program_id: Pubkey,
+        pub(crate) account_key: Pubkey,
+        pub(crate) program: ProgramTest,
+    }
+
+    impl TestState {
+        fn new(name: &str) -> TestState {
+            let (program_id, account_key) = (Pubkey::new_unique(), Pubkey::new_unique());
+            let program = ProgramTest::new(name, program_id, processor!(process_instruction));
+            TestState {
+                program_id,
+                account_key,
+                program,
+            }
+        }
+    }
+
     #[tokio::test]
     async fn test_minesweeper_solver_10x10_1() {
-        let program_id = Pubkey::new_unique();
-        let account_key = Pubkey::new_unique();
-
-        let mut program_test = ProgramTest::new(
-            "solana_program0",
-            program_id,
-            processor!(process_instruction),
-        );
+        let mut state = TestState::new("solana_program0");
 
         let grid = [
             5, 5, 1, 2, 9, 1, 0, 2, 10, 2, 1, 0, 9, 2, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
         ];
 
-        program_test.add_account(
-            account_key,
+        state.program.add_account(
+            state.account_key,
             Account {
                 lamports: 1_000_000,
                 data: Vec::with_capacity(0),
-                owner: program_id,
+                owner: state.program_id,
                 ..Account::default()
             },
         );
 
-        let (mut banks_client, payer, recent_blockhash) = program_test.start().await;
+        let (mut banks_client, payer, recent_blockhash) = state.program.start().await;
 
         let instruction = Instruction::new_with_bytes(
-            program_id,
+            state.program_id,
             &grid,
-            vec![AccountMeta::new(account_key, false)],
+            vec![AccountMeta::new(state.account_key, false)],
         );
 
         let transaction = Transaction::new_signed_with_payer(
@@ -108,14 +119,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_minesweeper_solver_rand() {
-        let program_id = Pubkey::new_unique();
-        let account_key = Pubkey::new_unique();
 
-        let mut program_test = ProgramTest::new(
-            "solana_program0",
-            program_id,
-            processor!(process_instruction),
-        );
+        let mut state = TestState::new("solana_program0");
 
         let width_height_pairs: Vec<(usize, usize)> = (1..=MAX_SIZE).zip(1..=MAX_SIZE).collect();
         assert!(width_height_pairs.len() == MAX_SIZE); // just to make sure
@@ -137,25 +142,26 @@ mod tests {
             .flatten()
             .collect(); // inefficent TLB wise, will opt later.
 
-        program_test.add_account(
-            account_key,
+        state.program.add_account(
+            state.account_key,
             Account {
                 lamports: 1_000_000, // lamports, not lesslie lamport ;)
                 data: Vec::with_capacity(0),
-                owner: program_id,
+                owner:state.program_id,
                 ..Account::default()
             },
         );
 
-        let (mut banks_client, payer, recent_blockhash) = program_test.start().await;
+        let (mut banks_client, payer, recent_blockhash) =state.program.start().await;
+        
 
         let transactions: Vec<Transaction> = grids
             .into_iter()
             .map(|grid| {
                 let instruction = Instruction::new_with_bytes(
-                    program_id,
+                    state.program_id,
                     &grid,
-                    vec![AccountMeta::new(account_key, false)],
+                    vec![AccountMeta::new(state.account_key, false)],
                 );
                 Transaction::new_signed_with_payer(
                     &[instruction],
